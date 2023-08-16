@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGA CHAT</title>
+    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="js/client.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>  
+<body>
+    <div class="header">
+      <div class="logo">
+          <img class="logo" src="logo.png" alt="logo">
+      </div>
+      <div class="heading">
+          <h1>GIGA CHAT</h1>
+      </div>
+
+    <div id="mySidebar" class="sidebar">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <ul>
+        <li>Text to speech<label class="switch1">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+      </li>
+      <li>Speech to text
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
+      </li>
+      <div class="dropdown">
+        <button class="dropbtn">Theme</button>
+        <div class="dropdown-content">
+        <a href="#" onclick="changeLight()">Light Theme</a>
+        <a href="#">Dark Theme</a>
+        </div>
+      </div>
+      
+      </ul>
+      
+    </div>
+    
+    <div id="main">
+      <button class="openbtn" onclick="openNav()">&#9776; Open Sidebar</button>
+    </div>
+  </div>
+
+       
+
+    <div class="container"></div> 
+    <div class="send">
+        <form action="#" id="send-container">
+            <input type="text" name="messageInp" id="messageInp">
+            <button class="btn btn1" type="submit">Send</button>
+
+        </form>
+        <button class="btn btn2" id ='btn2'><img class="img1" src="mic.png" alt="listen" width="50px" height="50px"></button>
+        <button class="btn btn3" id ='btn3' disabled>Stop></button>
+    </div>
+
+      <script>
+
+        let socket =io();
+        const startButton = document.getElementById('btn2');
+        const stopButton = document.getElementById('btn3');
+        const result = document.getElementById('messageInp'); 
+    
+        
+        socket.on('connect',()=>{
+            console.log("connected to server")
+        })
+        let recognition;
+        
+        startButton.addEventListener('click', () => {
+            recognition = new webkitSpeechRecognition();
+            
+            recognition.onstart = () => {
+                console.log('Listening started...');
+                startButton.disabled = true;
+                stopButton.disabled = false;
+            };
+            
+            recognition.onresult = event => {
+                const transcript = event.results[0][0].transcript;
+                result.value = transcript;
+                console.log(transcript)
+            };
+            
+            recognition.onend = () => {
+                console.log('Listening stopped.');
+                startButton.disabled = false;
+                stopButton.disabled = true;
+            };
+            
+            recognition.start();
+        });
+        
+        stopButton.addEventListener('click', () => {
+            if (recognition) {
+                recognition.stop();
+            }
+        });
+
+    </script>      
+      
+</body>
+</html>
